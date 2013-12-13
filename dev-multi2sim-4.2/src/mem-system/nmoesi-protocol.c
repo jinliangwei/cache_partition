@@ -129,7 +129,6 @@ void mod_handler_nmoesi_load(int event, void *data)
 
 	struct mod_t *mod = stack->mod;
 
-
 	if (event == EV_MOD_NMOESI_LOAD)
 	{
 		struct mod_stack_t *master_stack;
@@ -977,7 +976,6 @@ void mod_handler_nmoesi_find_and_lock(int event, void *data)
 
 	struct mod_t *mod = stack->mod;
 
-
 	if (event == EV_MOD_NMOESI_FIND_AND_LOCK)
 	{
 		mem_debug("  %lld %lld 0x%x %s find and lock (blocking=%d)\n",
@@ -1013,6 +1011,7 @@ void mod_handler_nmoesi_find_and_lock(int event, void *data)
 		 * This flag is checked by new writes to find out if it is already too
 		 * late to coalesce. */
 		ret->port_locked = 1;
+
 
 		req = stack->client_info->bytes;
 		req_core = stack->client_info->core;
@@ -1120,7 +1119,7 @@ void mod_handler_nmoesi_find_and_lock(int event, void *data)
 			/* Find victim */
 			if (stack->way < 0) 
 			{
-				stack->way = cache_replace_block(mod->cache, stack->set, stack->client_info->core);
+				stack->way = cache_replace_block(mod->cache, stack->set, req_core);
 			}
 		}
 		assert(stack->way >= 0);

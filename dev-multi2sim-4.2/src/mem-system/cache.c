@@ -120,47 +120,55 @@ static void cache_update_waylist(struct cache_set_t *set,
 static int partitioned_evict(struct cache_t *cache, struct cache_set_t *set, int core){
 
 	int other_core;
-	int underallocated = 0;
+	int take = 0;
 
-	if(core = 0) other_core = 1;
+	if(core == 0) other_core = 1;
 	else other_core = 0;
 
 	int set_ways = set->way_split[core];
-	int alloc_ways = cache->partitions[core];
+	int ways_alloced = cache->partitions[core].ways_alloced;
 
 	int core_to_evict;
 
 	// evict from this core's set of ways if its at or over alloced
-	if(set_ways >= alloc_ways){
+	if(set_ways >= ways_alloced){
 		core_to_evict = core;
-		underallocated = 0;
+		take = 0;
 
 	// otherwise take from the other core's set
 	}else{
 		core_to_evict = other_core;
-		underallocated = 1;
+		take = 1;
 	}
 
 	// walk backwards to find an appropriate block to evict, starting from the tail
-	cache_block_t *find = set->way_tail;
+	struct cache_block_t *find = set->way_tail;
 
 	for(;find != NULL; find=find->way_prev){
 		if(find->core == core_to_evict) break;
 
-		if(find->core == -1 && underallocated) break;
+		if(find->core == -1 && take) break;
+	}
+
+	// give LRU if no suitable way could be found
+	if(find == NULL){
+		find = set->way_tail;
 	}
 
 	// update the way splits if one core was not using its allocation
-	if(underallocated){
+	if(take){
 
 		set->way_split[core]++;
 
 		// if this block was allocated, it was taken from the other core
-		if(find->core != -1) set->wat_split[other_core]--;
+		if(find->core != -1){
+			
+			if(set->way_split[other_core] > 0)set->way_split[other_core]--;
+		}
 	}
 
-	// deallocate this block
-	find->core = -1;
+	// give this block to calling core
+	find->core = core;
 
 	// move it to the head
 	cache_update_waylist(set, find, cache_waylist_head);
@@ -168,7 +176,7 @@ static int partitioned_evict(struct cache_t *cache, struct cache_set_t *set, int
 	return find->way;
 }
 
-static void cache_partition(struct cache_t *cache, int req, int req_core){
+void cache_partition(struct cache_t *cache, int req, int req_core){
 
 	int other_core;
 	int other_req;
@@ -187,17 +195,17 @@ static void cache_partition(struct cache_t *cache, int req, int req_core){
 
 	// deallocate this core's ways
 	if(req == 0){
-		cache->partitions[req_core].alloc_ways = 0;
+		cache->partitions[req_core].ways_alloced = 0;
 
 		// give all to the other core
 		if(other_req != 0){
-			cache->partitions[other_core].alloc_ways = cache->assoc;
+			cache->partitions[other_core].ways_alloced = cache->assoc;
 			return;
 		}
 
 	// take all the ways
 	}else if(other_req == 0){
-		cache->partitions[req_core].alloc_ways = assoc;
+		cache->partitions[req_core].ways_alloced = assoc;
 		return;
 	}
 
@@ -208,14 +216,14 @@ static void cache_partition(struct cache_t *cache, int req, int req_core){
 	// cores will always get at least one way in the cache if they have a nonzero req
 	if(req < bytes_per_way){
 
-		cache->partitions[req_core].alloc_ways = 1;
-		cache->partitions[other_core].alloc_ways = assoc-1;
+		cache->partitions[req_core].ways_alloced = 1;
+		cache->partitions[other_core].ways_alloced = assoc-1;
 		return;
 
 	}else if(other_req < bytes_per_way){
 
-		cache->partitions[other_core].alloc_ways = 1;
-		cache->partitions[req_core].alloc_ways = assoc-1;
+		cache->partitions[other_core].ways_alloced = 1;
+		cache->partitions[req_core].ways_alloced = assoc-1;
 		return;
 
 	}
@@ -245,8 +253,8 @@ static void cache_partition(struct cache_t *cache, int req, int req_core){
 	}
 
 	// set the way allocations
-	cache->partitions[req_core]->alloc_ways = ways;
-	cache->partitions[other_core]->alloc_ways = other_ways;
+	cache->partitions[req_core].ways_alloced = ways;
+	cache->partitions[other_core].ways_alloced = other_ways;
 
 	return;
 }
@@ -306,7 +314,7 @@ struct cache_t *cache_create(char *name, unsigned int num_sets, unsigned int blo
 	cache->partitions = xcalloc(2, sizeof(struct cache_part_t));
 	int core = 0;
 	for(core = 0; core < 2; core++){
-		cache->partitions[core].alloc_ways = 0;
+		cache->partitions[core].ways_alloced = 0;
 		cache->partitions[core].req_bytes = 0;
 	}
 
@@ -412,7 +420,7 @@ void cache_access_block(struct cache_t *cache, int set, int way)
 	 * It will also be moved if it is its first access for FIFO policy, i.e., if the
 	 * state of the block was invalid. */
 	move_to_head = cache->policy == cache_policy_lru ||
-		(cache->policy == cache_policy_fifo && !cache->sets[set].blocks[way].state);
+		(cache->policy == cache_policy_fifo && !cache->sets[set].blocks[way].state)
 		|| cache->policy == cache_policy_part;
 	if (move_to_head && cache->sets[set].blocks[way].way_prev)
 		cache_update_waylist(&cache->sets[set],

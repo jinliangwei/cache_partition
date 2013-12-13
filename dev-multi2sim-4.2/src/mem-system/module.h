@@ -252,7 +252,7 @@ long long mod_access(struct mod_t *mod, enum mod_access_kind_t access_kind,
 int mod_can_access(struct mod_t *mod, unsigned int addr);
 
 int mod_find_block(struct mod_t *mod, unsigned int addr, int *set_ptr, int *way_ptr, 
-	int *tag_ptr, int *state_ptr);
+	int *tag_ptr, int *state_ptr, int req, int core);
 
 void mod_block_set_prefetched(struct mod_t *mod, unsigned int addr, int val);
 int mod_block_get_prefetched(struct mod_t *mod, unsigned int addr);

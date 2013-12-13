@@ -71,6 +71,8 @@ static int X86ThreadIssueSQ(X86Thread *self, int quantum)
 		/* create and fill the mod_client_info_t object */
 		client_info = mod_client_info_create(self->data_mod);
 		client_info->prefetcher_eip = store->eip;
+		client_info->core = core->id;
+		client_info->bytes = -1;
 
 		//TODO specify req and core in client_info
 
@@ -145,6 +147,9 @@ static int X86ThreadIssueLQ(X86Thread *self, int quant)
 		/* create and fill the mod_client_info_t object */
 		client_info = mod_client_info_create(self->data_mod);
 		client_info->prefetcher_eip = load->eip;
+		client_info->core = core->id;
+		client_info->bytes = -1;
+
 
 		// TODO FILL requesting core and partition size here
 
@@ -237,9 +242,16 @@ static int X86ThreadIssuePreQ(X86Thread *self, int quantum)
 		assert(prefetch->uinst->opcode == x86_uinst_prefetch);
 		X86ThreadRemovePreQ(self);
 
+		struct mod_client_info_t *client_info;
+
+		/* create and fill the mod_client_info_t object */
+		client_info = mod_client_info_create(self->data_mod);
+		client_info->core = core->id;
+		client_info->bytes = -1;
+
 		/* Access memory system */
 		mod_access(self->data_mod, mod_access_prefetch,
-			prefetch->phy_addr, NULL, core->event_queue, prefetch, NULL);
+			prefetch->phy_addr, NULL, core->event_queue, prefetch, client_info);
 
 		/* Record prefetched address */
 		prefetch_history_record(core->prefetch_history, prefetch->phy_addr);

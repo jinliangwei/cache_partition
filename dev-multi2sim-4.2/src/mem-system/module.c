@@ -212,7 +212,7 @@ int mod_find_block(struct mod_t *mod, unsigned int addr, int *set_ptr,
 	int tag;
 
 	/* repartition cache if L2 and new request was made */
-	if(cache->policy == cache_policy_t->cache_policy_part & req != -1){
+	if(cache->policy == cache_policy_part && req != -1){
 		cache_partition(cache, req, req_core);
 	}
 
@@ -270,7 +270,7 @@ void mod_block_set_prefetched(struct mod_t *mod, unsigned int addr, int val)
 	int set, way;
 
 	assert(mod->kind == mod_kind_cache && mod->cache != NULL);
-	if (mod->cache->prefetcher && mod_find_block(mod, addr, &set, &way, NULL, NULL))
+	if (mod->cache->prefetcher && mod_find_block(mod, addr, &set, &way, NULL, NULL, -1, 0))
 	{
 		mod->cache->sets[set].blocks[way].prefetched = val;
 	}
@@ -281,7 +281,7 @@ int mod_block_get_prefetched(struct mod_t *mod, unsigned int addr)
 	int set, way;
 
 	assert(mod->kind == mod_kind_cache && mod->cache != NULL);
-	if (mod->cache->prefetcher && mod_find_block(mod, addr, &set, &way, NULL, NULL))
+	if (mod->cache->prefetcher && mod_find_block(mod, addr, &set, &way, NULL, NULL, -1, 0))
 	{
 		return mod->cache->sets[set].blocks[way].prefetched;
 	}
