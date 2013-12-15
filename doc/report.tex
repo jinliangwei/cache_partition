@@ -4,9 +4,9 @@
 \usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri}
 \tikzset{>=stealth}
 
-\title{}
+\title{Dynamic Cache Partitioning Based on Software Hints}
 
-\author{}
+\author{Grant \and Jinilang}
 
 \begin{document}
 \maketitle
@@ -17,6 +17,109 @@
 
 \section{Introduction}
 
+In traditional chip-multi-processors (CMPs), the last-level cache is 
+shared among all cores and LRU is usually used as the replacement policy. Shared
+last-level cache is long konwn to suffer from interference among cores. The 
+LRU policy implicitly partitions the shared cache among cores based on their 
+requests for cache resources. The resulted cache partitioning among cores is
+unlikly to be optimal in terms of the total number of cache misses. This is 
+because the marginal benefit gained from increasing cache space differ across 
+cores. Limited cache resources should allocated to applications that may get
+more marginal benefits from them.
+
+Application developers might be able to predict their applications' cache usage 
+and thus request an optimal amoumt of shared cache for his application. For 
+example, the application developer might know that his application is a 
+streaming application. In that case, although the application demands a large 
+amount of cache, the marginal benefits the application gains from the additional
+cache space is small. Thus he requests a small amount of cache according the 
+application's working set size. So application programmers may provide hints for
+requesting shared cache space.
+
+Compiler might be able to analyze the program at compile time and predict the 
+application's working set size and thus make request accordingly. The operating
+sytem might be able to analyze the application's live trace and utilize more 
+sophisticated algorithms to predict its working set size that what can be done
+in hardware. Thus the operating system might as well provide hints for 
+requesting shared cache space.
+
+We understand that generating those hints might be a hard problem itself. 
+However, as a logical first step, we'd like to know whether those hints would 
+be helpful assuming idea hints can be generated. Therefore, in this project, we 
+performed a limit study and designed a cache partitioning mechanism based on 
+software hints to investigate how software hints may be utilized in cache 
+partitioning to minimize cache misses. We believe our work can serve as the 
+foundation of future works that intend to investigate cache partitioning based
+on software hints.
+
+\section{Background and Related Works}
+
+There have been serveral previous works that explored dynamic cache partitioning
+to improve the scalability of the multi-core processors. 
+\cite{Qureshi:2006:UCP:1194816.1194855} proposed a utility-based cache 
+partitioning strategy. In their approach, each core is associated with a utility
+monitor (UMON). UMON has a tag directory which caches a tag per set per way. 
+In order to reduce hardware overhead, UMON may cache only one tag for the same 
+cache way in all sets. By using UMON, a cache miss line can be obtained, which 
+depicts the relationship between number of cache misss and the number of ways 
+assigned to this core. By greedily assigning each cache way to the core where 
+the cache utility can be maximized (reducing most cache misses), this approach
+partitions the cache to maximize utility (minimize cache misses). This is called
+look ahead algorithm.
+
+\cite{Qureshi:2006:CMC:1150019.1136501} pointed out that cache misses are not 
+equivalently expensive. Parallel misses are much cheaper than isolated misses 
+because they can be served in parallel. Instead of minimizing the number of 
+cache misses, a better cache partitioning strategy might be minimizing MLP-based
+cache cost. This strategy was explored by \cite{conf/IEEEpact/MoretoCRV07} which
+demonstrated MLP-aware cache partitioning indeed achieves better performance.
+Recently, \cite{conf/IEEEpact/BeckmannS13} studied partitioning fully-associated
+cache to data and it reduced the cost of look-ahead algorithm by peek-ahead 
+algorithm.
+
+All previous works predict future cache usage based on previous cache miss 
+curve. This works if the cache usage pattern remains similar across different 
+phases of the program. When the memory usage pattern of the program changes 
+across phases, the prediction might be inaccurate. In our project, we'd like to
+further improve cache partitioning based on program hints for future memory 
+usage given by users, OS, or compiler.
+
+\cite{Ipek:2008:SMC:1381306.1382172} describes a novel memory controller design
+ which would use adaptive 
+scheduling based on machine learning. Using reinforcement learning, their 
+scheduler would optimize scheduling on the fly. Controller-state action pairs 
+are assigned reward values, and when commands are issued, the controller tries 
+to choose the command with the greatest long term value. A learning controller 
+brings about some great benefits to program performance. Primary amongst these 
+is that the controller optimize for bus bandwidth, and does so on the fly. Many 
+scheduling algorithms attempt provide the best bandwidth in the general case, 
+though there often weak spots in their approaches which reduce memory 
+throughput. By learning and being adaptable, the authors’ scheme fights this 
+weakness. In addition, the rewards system takes the core where the memory 
+request originated from, allowing the scheme to fight against starvation as 
+well. However the capabilities of the scheduling system are limited. While in 
+theory, the machine learning algorithm they chose should be able to take into 
+account infinitely many states and inputs, hardware and computation time hampers
+ the scheduling optimization possibilities. While the authors optimized their 
+algorithm for the resources they had available, there are various scenarios 
+which they were not able to account for due to hardware limitations, creating 
+weak spots in their system.
+
+\cite{10.1109/MM.2008.48} proposes a thread scheduling scheme to minimize LLC con-tention based on 
+architectural observations made by the OS at run- time. While the paper does 
+not discuss the modification of architectural features, it demonstrates how the 
+OS can interface with the architecture to find optimize system behavior. In this
+ particular instance, by leveraging features of the chosen architecture, the 
+authors were able to track cache hit/miss ratios as well as absolute counts of 
+hits and misses on caches in the system. Using these metrics, threads running in
+ the system were assigned weights which corresponded to their cache usage. 
+Threads were then scheduled on the cores in such a way that these weights were 
+spread as evenly as possible across shared caches. The benefits to this approach
+ are easily tangible. Scheduling threads in this way ensures that memory 
+intensive processes are given an appropriate amount of resources rather than 
+being forced to share an unnecessary and counter productive portion of cache. 
+The feature we are proposing could possibly extend this scheme by allowing the 
+OS to interface with shared caches to get better partitioning.
 
 \bibliography{ref}
 \bibliographystyle{abbrvnat}
