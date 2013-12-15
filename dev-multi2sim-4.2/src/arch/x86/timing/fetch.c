@@ -308,9 +308,9 @@ static void X86ThreadFetch(X86Thread *self)
 		int core = self->core->id;
 		int bytes = 0;
 		if(core == 0){
-			bytes = 4096;
+			bytes = 5632;
 		}else{
-			bytes = 4096;
+			bytes = 4608;
 		}
 
 		client_info = mod_client_info_create(self->data_mod);

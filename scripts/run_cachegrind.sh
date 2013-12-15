@@ -28,7 +28,7 @@ do
     valgrind --tool=cachegrind --LL=$LL_size,$n_ways,$linesize \
 	--I1=$I1_size,$L1_n_ways,$linesize \
 	--D1=$D1_size,$L1_n_ways,$linesize \
-	$prog $input > $output
+	$1 $2 > $3
 
 #	n_ways=$(( n_ways-1 ))
 #	LL_size=$(( n_ways*way_size ))
