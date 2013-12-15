@@ -1,0 +1,220 @@
+; Report for caches, TLBs, and main memory
+;    Accesses - Total number of accesses
+;    Hits, Misses - Accesses resulting in hits/misses
+;    HitRatio - Hits divided by accesses
+;    Evictions - Invalidated or replaced cache blocks
+;    Retries - For L1 caches, accesses that were retried
+;    ReadRetries, WriteRetries, NCWriteRetries - Read/Write retried accesses
+;    NoRetryAccesses - Number of accesses that were not retried
+;    NoRetryHits, NoRetryMisses - Hits and misses for not retried accesses
+;    NoRetryHitRatio - NoRetryHits divided by NoRetryAccesses
+;    NoRetryReads, NoRetryWrites - Not retried reads and writes
+;    Reads, Writes, NCWrites - Total read/write accesses
+;    BlockingReads, BlockingWrites, BlockingNCWrites - Reads/writes coming from lower-level cache
+;    NonBlockingReads, NonBlockingWrites, NonBlockingNCWrites - Coming from upper-level cache
+
+
+[ mod-ll ]
+
+Sets = 32
+Assoc = 8
+Policy = LRU
+BlockSize = 32
+Latency = 20
+Ports = 2
+
+Accesses = 3098166
+Hits = 3040872
+Misses = 57294
+HitRatio = 0.9815
+Evictions = 57038
+Retries = 0
+
+Reads = 3221611
+ReadRetries = 0
+BlockingReads = 2339411
+NonBlockingReads = 0
+ReadHits = 2294693
+ReadMisses = 926918
+
+Writes = 866661
+WriteRetries = 0
+BlockingWrites = 758755
+NonBlockingWrites = 0
+WriteHits = 746179
+WriteMisses = 120482
+
+NCWrites = 0
+NCWriteRetries = 0
+NCBlockingWrites = 0
+NCNonBlockingWrites = 0
+NCWriteHits = 0
+NCWriteMisses = 0
+Prefetches = 0
+PrefetchAborts = 0
+UselessPrefetches = 0
+
+NoRetryAccesses = 3098166
+NoRetryHits = 3040872
+NoRetryMisses = 57294
+NoRetryHitRatio = 0.9815
+NoRetryReads = 2339411
+NoRetryReadHits = 2294693
+NoRetryReadMisses = 44718
+NoRetryWrites = 758755
+NoRetryWriteHits = 746179
+NoRetryWriteMisses = 12576
+NoRetryNCWrites = 0
+NoRetryNCWriteHits = 0
+NoRetryNCWriteMisses = 0
+
+
+[ mod-mm ]
+
+Sets = 128
+Assoc = 8
+Policy = LRU
+BlockSize = 256
+Latency = 200
+Ports = 2
+
+Accesses = 114332
+Hits = 113542
+Misses = 790
+HitRatio = 0.9931
+Evictions = 29
+Retries = 0
+
+Reads = 44718
+ReadRetries = 0
+BlockingReads = 0
+NonBlockingReads = 44718
+ReadHits = 44096
+ReadMisses = 622
+
+Writes = 69614
+WriteRetries = 0
+BlockingWrites = 0
+NonBlockingWrites = 69614
+WriteHits = 69446
+WriteMisses = 168
+
+NCWrites = 0
+NCWriteRetries = 0
+NCBlockingWrites = 0
+NCNonBlockingWrites = 0
+NCWriteHits = 0
+NCWriteMisses = 0
+Prefetches = 0
+PrefetchAborts = 0
+UselessPrefetches = 0
+
+NoRetryAccesses = 114332
+NoRetryHits = 113542
+NoRetryMisses = 790
+NoRetryHitRatio = 0.9931
+NoRetryReads = 44718
+NoRetryReadHits = 44096
+NoRetryReadMisses = 622
+NoRetryWrites = 69614
+NoRetryWriteHits = 69446
+NoRetryWriteMisses = 168
+NoRetryNCWrites = 0
+NoRetryNCWriteHits = 0
+NoRetryNCWriteMisses = 0
+
+
+[ Network.net-ll-mm.General ]
+Transfers = 228664
+AverageMessageSize = 18.12
+AverageLatency = 4.0000
+
+[ Network.net-ll-mm.Link.link_<mod-ll.out_buf_0>_<Switch.in_buf_0> ]
+Config.Bandwidth = 256
+TransferredMessages = 114332
+TransferredBytes = 1395936
+BusyCycles = 114332
+BytesPerCycle = 0.0288
+Utilization = 0.0001
+
+[ Network.net-ll-mm.Link.link_<Switch.out_buf_0>_<mod-ll.in_buf_0> ]
+Config.Bandwidth = 256
+TransferredMessages = 114332
+TransferredBytes = 2748064
+BusyCycles = 114332
+BytesPerCycle = 0.0566
+Utilization = 0.0002
+
+[ Network.net-ll-mm.Link.link_<mod-mm.out_buf_0>_<Switch.in_buf_1> ]
+Config.Bandwidth = 256
+TransferredMessages = 114332
+TransferredBytes = 2748064
+BusyCycles = 114332
+BytesPerCycle = 0.0566
+Utilization = 0.0002
+
+[ Network.net-ll-mm.Link.link_<Switch.out_buf_1>_<mod-mm.in_buf_0> ]
+Config.Bandwidth = 256
+TransferredMessages = 114332
+TransferredBytes = 1395936
+BusyCycles = 114332
+BytesPerCycle = 0.0288
+Utilization = 0.0001
+
+[ Network.net-ll-mm.Node.mod-ll ]
+SentMessages = 114332
+SentBytes = 1395936
+SendRate = 0.0288
+ReceivedMessages = 114332
+ReceivedBytes = 2748064
+ReceiveRate = 0.0566
+in_buf_0.Size = 1024 
+in_buf_0.MessageOccupancy = 0.00
+in_buf_0.ByteOccupancy = 0.06
+in_buf_0.Utilization = 0.0001
+out_buf_0.Size = 1024 
+out_buf_0.MessageOccupancy = 0.00
+out_buf_0.ByteOccupancy = 0.03
+out_buf_0.Utilization = 0.0000
+
+[ Network.net-ll-mm.Node.mod-mm ]
+SentMessages = 114332
+SentBytes = 2748064
+SendRate = 0.0566
+ReceivedMessages = 114332
+ReceivedBytes = 1395936
+ReceiveRate = 0.0288
+in_buf_0.Size = 1024 
+in_buf_0.MessageOccupancy = 0.00
+in_buf_0.ByteOccupancy = 0.03
+in_buf_0.Utilization = 0.0000
+out_buf_0.Size = 1024 
+out_buf_0.MessageOccupancy = 0.00
+out_buf_0.ByteOccupancy = 0.06
+out_buf_0.Utilization = 0.0001
+
+[ Network.net-ll-mm.Node.Switch ]
+Config.BandWidth = 256
+SentMessages = 228664
+SentBytes = 4144000
+SendRate = 0.0854
+ReceivedMessages = 228664
+ReceivedBytes = 4144000
+ReceiveRate = 0.0854
+in_buf_0.Size = 1024 
+in_buf_0.MessageOccupancy = 0.00
+in_buf_0.ByteOccupancy = 0.03
+in_buf_0.Utilization = 0.0000
+in_buf_1.Size = 1024 
+in_buf_1.MessageOccupancy = 0.00
+in_buf_1.ByteOccupancy = 0.06
+in_buf_1.Utilization = 0.0001
+out_buf_0.Size = 1024 
+out_buf_0.MessageOccupancy = 0.00
+out_buf_0.ByteOccupancy = 0.06
+out_buf_0.Utilization = 0.0001
+out_buf_1.Size = 1024 
+out_buf_1.MessageOccupancy = 0.00
+out_buf_1.ByteOccupancy = 0.03
+out_buf_1.Utilization = 0.0000
+

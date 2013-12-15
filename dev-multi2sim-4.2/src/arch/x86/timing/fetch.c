@@ -307,10 +307,13 @@ static void X86ThreadFetch(X86Thread *self)
 
 		int core = self->core->id;
 		int bytes = 0;
+
+		int req = 2048;
+
 		if(core == 0){
-			bytes = 5632;
+			bytes = 4096 - req;
 		}else{
-			bytes = 4608;
+			bytes = req;
 		}
 
 		client_info = mod_client_info_create(self->data_mod);
