@@ -284,7 +284,7 @@ our partitioning methods against a static split partitioning approach, in which 
   \label{fig:work_set_results}
 \end{figure}
 
-The initial step of our project was to evaluate the performance of our working set based implementation. This can be seen in Figure~\ref{fig:hinted_partition}, over our relatively small sample size, the results show an improvement. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
+The initial step of our project was to evaluate the performance of our working set based implementation. As can be seen in Figure~\ref{fig:hinted_partition}, the results show an improvement over our relatively small sample size. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
 massive degradation in performance. This revealed one of the dangers with simple working set partitioning. While it is simple for a developer to ascertain the working set of his program, it is impossible for the cache to weight two similar working sets against each other. As can be seen by comparing  Figure~\ref{fig:epic-encode} and Figure ~\ref{fig:epic-decode}, the base MPKI for Epic Encode is higher than that of Epic Decode. However, the working set size for Epic Decode appears to be higher than that of Epic Encode, which resulted in the manner in which we decided to make the simulated request. Since Epic Encode was given a smaller partition than that of Epic Decode, despite the fact that it generated more cache misses, performance suffered. The possibility for misallocations like this led to the development of our utility based partitioning method.
 
 \begin{figure}
@@ -339,7 +339,7 @@ utility profiles, such as that of epic encode vs epic decode. The partitioning c
  
 While the investigation yielded interesting results with potential, many shortcomings prevented it from being thorough and definitively conclusive. First and foremost among these shortcomings was lack of access the SPEC2006 benchmark workloads. This shaped our non-standard simulation set up. As a substitute, we used Mediabench I and associated sample workloads, which only began to display poor locality at cache sizes of 4 kb. Though we were able to modify our simulator layout to account for this, the resulting simulation results may not relate well to the most current benchmarks and workloads.
 
-Additionally we used only a small size of benchmarks for experiments. This was partially due to the fact that some of the simulations took too long to run, and partially due to the fact that disparities in running time created unusable data for
+Additionally we used only a small size of benchmarks for experiments. This was partially due to the fact that some of t:he simulations took too long to run, and partially due to the fact that disparities in running time created unusable data for
 cache comparison. One long program would dominate the short program, and it would appear as if all cache statistics could be attributed to the longer running program. In hindsight, it would have been best to create as large a sample size
 as possible, as the small sample of programs led to a small number of pairings which did not fully demonstrate the potential of our mechanism, or even some of its shortcomings.
 
