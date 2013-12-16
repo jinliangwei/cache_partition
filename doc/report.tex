@@ -199,8 +199,8 @@ application enters a function.
 The propsed technique requires our framework to take in cache request any time 
 and adjust cache partitioning accoridngly. However, this was too complicated to
 implement. Due to limitation of time, we resorted to a simplified 
-implementation. Instead of letting the application to issue cache requests at 
-phase changes, we only let applications to issue cache requests when the program
+implementation. Instead of letting the application issue cache requests at 
+phase changes, we only let applications issue cache requests when the program
 starts. The shared cache is partitioned according to the requests and the 
 partitioning is used for the entire course of the program.
 
@@ -218,18 +218,32 @@ cache, we obtained the cache miss curve of the entire program as well as that of
 
 In order to evaluate the \emph{working-set-size-based partitioning}, we need to 
 know the working set size of each applications. We obtained that from each 
-application's cache miss curve. We show a few applications' miss curves in 
-Figure~\ref{fig:miss-curve}. We consider the working set size to be the point
-where the cache miss rate stops dropping rapidly as the cache size increases. In
-other words, it's where the slope of the cache miss curve decreases 
+application's cache miss curve. We show a few applications' miss curves in Figure~\ref{fig:miss-curve}. 
+We consider the working set size to be the point where the cache miss rate stops dropping rapidly as the cache size increases. In other words, it's where the slope of the cache miss curve decreases 
 significantly. For some applications, such as those shown in 
 Figure~\ref{fig:epic-decode} and Figure~\ref{fig:epic-encode}, this point is 
 obvious. For some other applications, such as those shown in 
 Figure~\ref{fig:jpeg-decode} and Figure~\ref{fig:jpeg-encode}, it's not obvious
 where the marginal benefit of increasing cache size drops. In such cases, we 
-might make a bad decision in choosng working set sizes. To evaluate the effects 
-of choosing suboptimal working set size, we conducted sensitivity experiments 
-whose results are shown in Section~\ref{sec:results}.
+might make a bad decision in choosng working set sizes. Some of the
+effects of choosing a bad working set can be seen in Section~\ref{sec:results}.
+
+The \emph{cache-miss-curve-based partitioning} was evaluated in a similar way.
+Due to the relatively static nature of our simulator implementation, no reimplementation
+was required. Working set sizes which summed to the size of the cache, thus
+corresponding directly to the number of ways to be assigned to a core's partition.
+To obtain the optimal partition for this mechanism, the two miss curves were overlaid
+in opposite directions. The reason for this is due to the fact that partitioning acts like a sliding scale
+between applications. Sliding one way will cause fewer misses for one application, but more for the
+other. By overlaying the curves in this manner, their point of intersection will indicate the optimal partitioning
+between the two applications. At the point where the curves meet, the marginal utility lost by each application
+is equal. Here, marginal utility is measured in cache misses per instruction. The start and end point for each miss curve corresponded directly to the size of the cache. For our simulations, the miss curves were cut off at a size of 3584,
+as a single collection of ways across the sets of the cache sums to 512 bytes, and no
+application can take all ways, or have none. For some application pairs, the miss curves intersected at a simulatable
+size point, while for others the intersection fell between points. In these cases, the nearest size point was chosen. 
+If we had been able to simulate a larger cache, we could have increased the granularity of the ways. However,
+this was not the case and thus must be addressed in a future work.
+
 
 \section{Results and Analyses}
 
