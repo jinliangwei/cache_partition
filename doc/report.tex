@@ -205,7 +205,7 @@ starts. The shared cache is partitioned according to the requests and the
 partitioning is used for the entire course of the program.
 
 Our technique is implemented on a simulator Multi2Sim, which is used for 
-evaluation.
+evaluation. We used Mediabench as our benchmarks \cite{mediabench}.
 
 In order to evaluate our proposed partitioning strategy, we need to predict the 
 working set size and the cache miss curve of each function. To learn the cache 
@@ -216,7 +216,20 @@ statistics of each function of the program. Thus, by varying the size of shared
 cache, we obtained the cache miss curve of the entire program as well as that of
  each function.
 
-In order to evaluate the \emph{working-set-size-based partitioning}, we 
+In order to evaluate the \emph{working-set-size-based partitioning}, we need to 
+know the working set size of each applications. We obtained that from each 
+application's cache miss curve. We show a few applications' miss curves in 
+Figure~\ref{fig:miss-curve}. We consider the working set size to be the point
+where the cache miss rate stops dropping rapidly as the cache size increases. In
+other words, it's where the slope of the cache miss curve decreases 
+significantly. For some applications, such as those shown in 
+Figure~\ref{fig:epic-decode} and Figure~\ref{fig:epic-encode}, this point is 
+obvious. For some other applications, such as those shown in 
+Figure~\ref{fig:jpeg-decode} and Figure~\ref{fig:jpeg-encode}, it's not obvious
+where the marginal benefit of increasing cache size drops. In such cases, we 
+might make a bad decision in choosng working set sizes. To evaluate the effects 
+of choosing suboptimal working set size, we conducted sensitivity experiments 
+whose results are shown in Section~\ref{sec:results}.
 
 \section{Results and Analyses}
 
@@ -224,26 +237,39 @@ In order to evaluate the \emph{working-set-size-based partitioning}, we
         \centering
         \begin{subfigure}[b]{0.25\textwidth}
           \includegraphics[width=\textwidth]{figs/epic-decode-miss-curve.pdf}
+          \caption{Epic-decode}
+          \label{fig:epic-decode}
         \end{subfigure}%
         %\quad
         \begin{subfigure}[b]{0.25\textwidth}
           \includegraphics[width=\textwidth]{figs/epic-encode-miss-curve.pdf}
-       \end{subfigure}
+          \caption{Epic-encode}
+          \label{fig:epic-encode}
+        \end{subfigure}
 
         \begin{subfigure}[b]{0.25\textwidth}
           \includegraphics[width=\textwidth]{figs/jpeg-decode-miss-curve.pdf}
+          \caption{Jpeg-decode}
+          \label{fig:jpeg-decode}
         \end{subfigure}%
         %\quad
         \begin{subfigure}[b]{0.25\textwidth}
           \includegraphics[width=\textwidth]{figs/jpeg-encode-miss-curve.pdf}
-       \end{subfigure}
-
+          \caption{Jpeg-encode}
+          \label{fig:jpeg-encode}
+        \end{subfigure}
+       \caption{Example applications' miss curves}
+       \label{fig:miss-curve}
 \end{figure}
+
+\section{Results and Analysis}
+\label{sec:results}
 
 \begin{figure}
   \includegraphics[width=0.5\textwidth]{figs/work_set_size_hit_ratio.png}
 \end{figure}
 
+<<<<<<< HEAD
 \section{Lessons Learned, Shortcomings, and Future Work}
  
 While the investigation yielded interesting results with potential, many shortcomings prevented it from being thorough and definitively conclusive. First and foremost among these shortcomings was lack of access the SPEC2006 benchmark workloads. This shaped our non-standard simulation set up. As a substitute, we used Mediabench I and associated sample workloads, which only began to display poor locality at cache sizes of 4 kb. Though we were able to modify our simulator layout to account for this, the resulting simulation results may not relate well to the most current benchmarks and workloads.
@@ -257,6 +283,8 @@ The work we have done is essentially a proof of concept, which we believe shows 
 \section{Conclusion}
 
 We introduced a mechanism for allowing developers to provide software hints to shared caches. Our technique amounts to allowing developers to make allocation requests into a shared last level cache. This allows the cache to intelligently allocate cache-ways to applications running on different processor cores such that cache space is maximally used by the system. Although the original implemented solution simply consisted of requiring developers to indicate working set size, we created a more advanced implementation which took into account cache sensitivity as well as working set size. The final experimental implementation compared running applications’ marginal utility curves to determine the optimal way partitioning for the system. This implementation shows improvement over naïve LRU replacement as well as simple static partitioning methods. The next logical step in our implementation would be to implement capability for dynamic requests. Further, we wish to compare this implementation to utility monitoring based partitioning solutions, or even augment our final solution with utility monitoring to determine the greatest point to which cache partitioning can be maximized.
+=======
+>>>>>>> 70cbeb557088e42c7d331af91cab7fdfe891756a
 
 
 \bibliography{ref}
