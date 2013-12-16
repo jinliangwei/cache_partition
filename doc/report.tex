@@ -9,7 +9,7 @@
 
 \title{Dynamic Cache Partitioning Based on Software Hints}
 
-\author{Grant \and Jinilang}
+\author{Grant Skudlarek \and Jinilang Wei}
 
 \begin{document}
 \maketitle
@@ -114,7 +114,7 @@ brings about some great benefits to program performance. Primary amongst these
 is that the controller optimize for bus bandwidth, and does so on the fly. Many 
 scheduling algorithms attempt provide the best bandwidth in the general case, 
 though there often weak spots in their approaches which reduce memory 
-throughput. By learning and being adaptable, the authors’ scheme fights this 
+throughput. By learning and being adaptable, the authors' scheme fights this 
 weakness. In addition, the rewards system takes the core where the memory 
 request originated from, allowing the scheme to fight against starvation as 
 well. However the capabilities of the scheduling system are limited. While in 
@@ -180,7 +180,6 @@ function boundaries. Thus reqeusts for shared cache are issued every time the
 application enters a function.
 
 \begin{figure}[th!]
-  \label{fig:hinted_partition}
   \centering
   \includegraphics[width=.5\textwidth]{figs/hinted_partition.pdf}
   \caption{\small Visual illustration of shared cache partitioning based on software 
@@ -191,9 +190,8 @@ application enters a function.
   allocated for core0 and 4 ways are allocated for core1. When application 1 issues
   a new request for shared cache, the shared cache re-partitions ways 
   accordingly.}
+  \label{fig:hinted_partition}
 \end{figure}
-
-
 
 \section{Implementation and Evaluation Methology}
 
@@ -316,24 +314,24 @@ massive degradation in performance. This revealed one of the dangers with simple
   \begin{subfigure}[b]{0.22\textwidth}
     \includegraphics[width=\textwidth]{figs/jpeg-encode+epic-decode.pdf}
     \caption{Jpeg-encode+Epic-decode}
-    \label{fig:jpeg-encode}
+    \label{fig:jpeg-encode-epic-decode}
   \end{subfigure}
   \begin{subfigure}[b]{0.22\textwidth}
     \includegraphics[width=\textwidth]{figs/jpeg-encode+epic-encode.pdf}
     \caption{Jpeg-encode+Epic-encode}
-    \label{fig:jpeg-decode}
+    \label{fig:jpeg-decode-epic-encode}
   \end{subfigure}
   \begin{subfigure}[b]{0.22\textwidth}
     \includegraphics[width=\textwidth]{figs/jpeg-encode+jpeg-decode.pdf}
     \caption{Jpeg-encode+Jpeg-decode}
-    \label{fig:jpeg-encode}
+    \label{fig:jpeg-encode-jpeg-decode}
   \end{subfigure}
   \caption{Example applications' miss curve comparison}
 
   \label{fig:miss-curve-comp}
 \end{figure}
 
-Over our chosen sample set, utility based partitioning performs largely as well as working set partitioning or even the simple split partition. This is due to the fact that those programs have similar cache utility profiles, meaning an even split
+As shown in Figure~\ref{utility_results}, over our chosen sample set, utility based partitioning performs largely as well as working set partitioning or even the simple split partition. This is due to the fact that those programs have similar cache utility profiles, meaning an even split
 will generate a fairly optimal partitioning. Where utility based partitioning shines is in application pairings of fairly different
 utility profiles, such as that of epic encode vs epic decode. The partitioning chosen via the marginal utility intersection brought performance back to at least the level of naive LRU replacement. While LRU performance isn't necessarily great,  this is an example of utility based partitioning's capability of navigating the pitfalls of working set based partitioning. Similar results can be seen in Figure~\ref{fig:jpeg-decode} vs Figure ~\ref{fig:epic-decode}, where working set doesn't perform as well as the even split. In this instance, while Epic Decode doesn't have a particularly high miss rate per instruction, working set still discounts its value, and takes too many ways from jpeg-decode.  In fact their utility profiles are not super misbalanced, resulting in decent even split performance.
 
@@ -345,7 +343,7 @@ Additionally we used only a small size of benchmarks for experiments. This was p
 cache comparison. One long program would dominate the short program, and it would appear as if all cache statistics could be attributed to the longer running program. In hindsight, it would have been best to create as large a sample size
 as possible, as the small sample of programs led to a small number of pairings which did not fully demonstrate the potential of our mechanism, or even some of its shortcomings.
 
-Beyond the shortcomings of the benchmarks we had used, and the resulting effects on the simulations we ran, there were many lacking points in our custom simulator implementation. We were able to implement cache partitioning over the entire run of the program, which was a good proof of concept. However, in our original plan we stated that we would investigate the potential of software hints at phase changes in the program via function profiling. However, for the benchmarks we used, we were unable to reverse engineer the call graphs for our test programs from the provided binaries. Though cachegrind was able to count cache misses per function, this data was useless without knowledge of these functions’ placement in the program.
+Beyond the shortcomings of the benchmarks we had used, and the resulting effects on the simulations we ran, there were many lacking points in our custom simulator implementation. We were able to implement cache partitioning over the entire run of the program, which was a good proof of concept. However, in our original plan we stated that we would investigate the potential of software hints at phase changes in the program via function profiling. However, for the benchmarks we used, we were unable to reverse engineer the call graphs for our test programs from the provided binaries. Though cachegrind was able to count cache misses per function, this data was useless without knowledge of these functions' placement in the program.
  
 In addition, in our custom simulator did not implement partitioning via Utility Monitoring. This was meant to be the prime point of comparison for our study, as our software hints implementation essentially places the burden of utility analysis onto the developer.  However, we were unable to implement utility monitoring in our simulator and thus we were unable to study it. On the other hand, considering the fact that our partitioning solution was largely incomplete, it likely would not have had a strong chance of competing against a UMON partitioning solution. Our tested implementation was essentially static, whereas UMON allocates ways dynamically.
  
@@ -353,7 +351,7 @@ The work we have done is essentially a proof of concept, which we believe shows 
 
 \section{Conclusion}
 
-We introduced a mechanism for allowing developers to provide software hints to shared caches. Our technique amounts to allowing developers to make allocation requests into a shared last level cache. This allows the cache to intelligently allocate cache-ways to applications running on different processor cores such that cache space is maximally used by the system. Although the original implemented solution simply consisted of requiring developers to indicate working set size, we created a more advanced implementation which took into account cache sensitivity as well as working set size. The final experimental implementation compared running applications’ marginal utility curves to determine the optimal way partitioning for the system. This implementation shows improvement over naïve LRU replacement as well as simple static partitioning methods. The next logical step in our implementation would be to implement capability for dynamic requests. Further, we wish to compare this implementation to utility monitoring based partitioning solutions, or even augment our final solution with utility monitoring to determine the greatest point to which cache partitioning can be maximized.
+We introduced a mechanism for allowing developers to provide software hints to shared caches. Our technique amounts to allowing developers to make allocation requests into a shared last level cache. This allows the cache to intelligently allocate cache-ways to applications running on different processor cores such that cache space is maximally used by the system. Although the original implemented solution simply consisted of requiring developers to indicate working set size, we created a more advanced implementation which took into account cache sensitivity as well as working set size. The final experimental implementation compared running applications' marginal utility curves to determine the optimal way partitioning for the system. This implementation shows improvement over naive LRU replacement as well as simple static partitioning methods. The next logical step in our implementation would be to implement capability for dynamic requests. Further, we wish to compare this implementation to utility monitoring based partitioning solutions, or even augment our final solution with utility monitoring to determine the greatest point to which cache partitioning can be maximized.
 
 
 \bibliography{ref}
