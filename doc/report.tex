@@ -331,7 +331,7 @@ massive degradation in performance. This revealed one of the dangers with simple
   \label{fig:miss-curve-comp}
 \end{figure}
 
-As shown in Figure~\ref{utility_results}, over our chosen sample set, utility based partitioning performs largely as well as working set partitioning or even the simple split partition. This is due to the fact that those programs have similar cache utility profiles, meaning an even split
+As shown in Figure~\ref{fig:utility_results}, over our chosen sample set, utility based partitioning performs largely as well as working set partitioning or even the simple split partition. This is due to the fact that those programs have similar cache utility profiles, meaning an even split
 will generate a fairly optimal partitioning. Where utility based partitioning shines is in application pairings of fairly different
 utility profiles, such as that of epic encode vs epic decode. The partitioning chosen via the marginal utility intersection brought performance back to at least the level of naive LRU replacement. While LRU performance isn't necessarily great,  this is an example of utility based partitioning's capability of navigating the pitfalls of working set based partitioning. Similar results can be seen in Figure~\ref{fig:jpeg-decode} vs Figure ~\ref{fig:epic-decode}, where working set doesn't perform as well as the even split. In this instance, while Epic Decode doesn't have a particularly high miss rate per instruction, working set still discounts its value, and takes too many ways from jpeg-decode.  In fact their utility profiles are not super misbalanced, resulting in decent even split performance.
 
