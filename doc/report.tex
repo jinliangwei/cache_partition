@@ -198,12 +198,13 @@ phase changes, we only let applications to issue cache requests when the program
 starts. The shared cache is partitioned according to the requests and the 
 partitioning is used for the entire course of the program.
 
-Our technique is implemented on a simulator Multi2Sim, which is used for 
-evaluation. We used Mediabench as our benchmarks \cite{mediabench}.
+Our technique is implemented on a simulator Multi2Sim \cite{multi2sim}, 
+which is used for evaluation. We used Mediabench as our benchmarks 
+\cite{mediabench}.
 
 In order to evaluate our proposed partitioning strategy, we need to predict the 
 working set size and the cache miss curve of each function. To learn the cache 
-miss curve of each function, we used a tool called Cachegrind 
+miss curve of each function, we used a tool called Cachegrind \cite{cachegrind}
 which simulates a cache of user-specified configuration and reports statistics 
 about the program running with the give cache setting. It may also report 
 statistics of each function of the program. Thus, by varying the size of shared 
@@ -257,6 +258,11 @@ whose results are shown in Section~\ref{sec:results}.
 \section{Results and Analysis}
 \label{sec:results}
 
+\subsection{Working-Set-Size-Based Partitioning}
+
+Firstly, we show experiment results of working-set-size-based partitioning in 
+Figure~
+
 \begin{figure}
   \includegraphics[width=0.5\textwidth]{figs/work_set_size_hit_ratio.png}
 \end{figure}
@@ -264,6 +270,6 @@ whose results are shown in Section~\ref{sec:results}.
 
 
 \bibliography{ref}
-\bibliographystyle{abbrvnat}
+\bibliographystyle{plain}
 
 \end{document}
