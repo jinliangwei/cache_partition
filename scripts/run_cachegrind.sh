@@ -10,27 +10,31 @@ input=$2
 output=$3
 
 # cache config params
-# 1MB 
-I1_size=512
-D1_size=512
+# 4KB 
+I1_size=8192
+D1_size=8192
 LL_size=1048576
-L1_n_ways=8
+L1_n_ways=16
 n_ways=16
-linesize=64
+linesize=32
 
-n_tests=10
-idx=0
+L1_waysize=$(( D1_size/L1_n_ways ))
 
-while [ $idx -le $n_tests ] 
+while [ $L1_n_ways -gt 0 ] 
 do
     echo "test $idx"
-    echo "LL_size=$LL_size, associativity=16, linesize=$linesize"
+    echo "L1_size=$D1_size, associativity=$L1_n_ways, linesize=$linesize"
     #run cachegrind for the cache dimensions
     valgrind --tool=cachegrind --LL=$LL_size,$n_ways,$linesize \
 	--I1=$I1_size,$L1_n_ways,$linesize \
 	--D1=$D1_size,$L1_n_ways,$linesize \
-	$prog $input > $output
+	$1 $2 > $3
 
-    LL_size=$(( LL_size/2 ))
-    idx=$(( idx+1 ))
+#	n_ways=$(( n_ways-1 ))
+#	LL_size=$(( n_ways*way_size ))
+
+	L1_n_ways=$(( L1_n_ways-1 ))
+	D1_size=$(( L1_n_ways*L1_waysize ))
+	I1_size=$(( L1_n_ways*L1_waysize ))
+
 done

@@ -1,0 +1,12 @@
+Pegwit v8.7
+Usage (init/encrypt/decrypt/sign/verify) :
+-i <secret-key >public-key
+-e public-key plain cipher <random-junk
+-d cipher plain <secret-key
+-s plain <secret-key >signature
+-v public-key plain <signature
+-E plain cipher <key
+-D cipher plain <key
+-S text <secret-key >clearsigned-text
+-V public-key clearsigned-text >text
+-f[operation] [type pegwit -f for details]

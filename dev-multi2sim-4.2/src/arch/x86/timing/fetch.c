@@ -305,8 +305,19 @@ static void X86ThreadFetch(X86Thread *self)
 	{
 		//TODO PARTITION REQUESTS GO HERE
 
+		int core = self->core->id;
+		int bytes = 0;
+
+		int req = 2048;
+
+		if(core == 0){
+			bytes = 4096 - req;
+		}else{
+			bytes = req;
+		}
+
 		client_info = mod_client_info_create(self->data_mod);
-		client_info->bytes = -1;
+		client_info->bytes = bytes;
 		client_info->core = self->core->id;
 	
 		phy_addr = mmu_translate(self->ctx->address_space_index, self->fetch_neip);

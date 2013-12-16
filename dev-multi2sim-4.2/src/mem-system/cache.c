@@ -153,6 +153,9 @@ static int partitioned_evict(struct cache_t *cache, struct cache_set_t *set, int
 	// give LRU if no suitable way could be found
 	if(find == NULL){
 		find = set->way_tail;
+		if(set->way_tail->core == other_core){
+			take = 1;
+		}
 	}
 
 	// update the way splits if one core was not using its allocation
@@ -191,6 +194,8 @@ void cache_partition(struct cache_t *cache, int req, int req_core){
 		other_req = cache->partitions[0].req_bytes;
 	}
 
+	// do nothing if same request
+	if(cache->partitions[req_core].req_bytes == req) return;
 	cache->partitions[req_core].req_bytes = req;
 
 	// deallocate this core's ways
