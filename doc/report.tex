@@ -239,8 +239,8 @@ between applications. Sliding one way will cause fewer misses for one applicatio
 other. By overlaying the curves in this manner, their point of intersection will indicate the optimal partitioning
 between the two applications. At the point where the curves meet, the marginal utility lost by each application
 is equal. Here, marginal utility is measured in cache misses per instruction. The start and end point for each miss curve corresponded directly to the size of the cache. For our simulations, the miss curves were cut off at a size of 3584,
-as a single collection of ways across the sets of the cache sums to 512 bytes, and no
-application can take all ways, or have none. For some application pairs, the miss curves intersected at a simulatable
+as a single collection of ways across the sets of the cache sums to 512 bytes and the simulated cache size was 4096. No
+application can take all ways, or have none. Additionally, the lower end of the miss curves was cut off at 512 bytes for the same reason. For some application pairs, the miss curves intersected at a simulatable
 size point, while for others the intersection fell between points. In these cases, the nearest size point was chosen. 
 If we had been able to simulate a larger cache, we could have increased the granularity of the ways. However,
 this was not the case and thus must be addressed in a future work. In this portion of experimentation, we also evaluated
@@ -248,6 +248,7 @@ our partitioning methods against a static split partitioning approach, in which 
 
 
 \section{Results and Analyses}
+\label{sec:results}
 
 The initial step of our project was to evaluate the performance of our working 
 set based implementation. As can be seen in Figure~\ref{fig:work_set_results}, over our relatively small sample size, the results show an improvement. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
