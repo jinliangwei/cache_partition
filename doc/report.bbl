@@ -1,0 +1,65 @@
+\begin{thebibliography}{6}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Beckmann and Sanchez(2013)]{conf/IEEEpact/BeckmannS13}
+N.~Beckmann and D.~Sanchez.
+\newblock Jigsaw: Scalable software-defined caches.
+\newblock In \emph{PACT}, pages 213--224. IEEE, 2013.
+\newblock ISBN 978-1-4799-1018-2.
+\newblock URL
+  \url{http://dblp.uni-trier.de/db/conf/IEEEpact/pact2013.html#BeckmannS13}.
+
+\bibitem[Ipek et~al.(2008)Ipek, Mutlu, Mart\'{\i}nez, and
+  Caruana]{Ipek:2008:SMC:1381306.1382172}
+E.~Ipek, O.~Mutlu, J.~F. Mart\'{\i}nez, and R.~Caruana.
+\newblock Self-optimizing memory controllers: A reinforcement learning
+  approach.
+\newblock In \emph{Proceedings of the 35th Annual International Symposium on
+  Computer Architecture}, ISCA '08, pages 39--50. IEEE Computer Society, 2008.
+\newblock ISBN 978-0-7695-3174-8.
+\newblock \doi{10.1109/ISCA.2008.21}.
+\newblock URL \url{http://dx.doi.org/10.1109/ISCA.2008.21}.
+
+\bibitem[Knauerhase et~al.(2008)Knauerhase, Brett, Hohlt, Li, and
+  Hahn]{10.1109/MM.2008.48}
+R.~Knauerhase, P.~Brett, B.~Hohlt, T.~Li, and S.~Hahn.
+\newblock Using os observations to improve performance in multicore systems.
+\newblock \emph{IEEE Micro}, 28\penalty0 (3):\penalty0 54--66, 2008.
+\newblock ISSN 0272-1732.
+\newblock \doi{http://doi.ieeecomputersociety.org/10.1109/MM.2008.48}.
+
+\bibitem[Moreto et~al.(2007)Moreto, Cazorla, Ramirez, and
+  Valero]{conf/IEEEpact/MoretoCRV07}
+M.~Moreto, F.~J. Cazorla, A.~Ramirez, and M.~Valero.
+\newblock Mlp-aware dynamic cache partitioning.
+\newblock In \emph{PACT}, page 418. IEEE Computer Society, 2007.
+\newblock URL
+  \url{http://dblp.uni-trier.de/db/conf/IEEEpact/IEEEpact2007.html#MoretoCRV07%
+}.
+
+\bibitem[Qureshi and Patt(2006)]{Qureshi:2006:UCP:1194816.1194855}
+M.~K. Qureshi and Y.~N. Patt.
+\newblock Utility-based cache partitioning: A low-overhead, high-performance,
+  runtime mechtanism to partition shared caches.
+\newblock In \emph{Proceedings of the 39th Annual IEEE/ACM International
+  Symposium on Microarchitecture}, MICRO 39, pages 423--432. IEEE Computer
+  Society, 2006.
+\newblock ISBN 0-7695-2732-9.
+\newblock \doi{10.1109/MICRO.2006.49}.
+\newblock URL \url{http://dx.doi.org/10.1109/MICRO.2006.49}.
+
+\bibitem[Qureshi et~al.(2006)Qureshi, Lynch, Mutlu, and
+  Patt]{Qureshi:2006:CMC:1150019.1136501}
+M.~K. Qureshi, D.~N. Lynch, O.~Mutlu, and Y.~N. Patt.
+\newblock A case for mlp-aware cache replacement.
+\newblock \emph{SIGARCH Comput. Archit. News}, 34\penalty0 (2):\penalty0
+  167--178, May 2006.
+\newblock ISSN 0163-5964.
+\newblock \doi{10.1145/1150019.1136501}.
+\newblock URL \url{http://doi.acm.org/10.1145/1150019.1136501}.
+
+\end{thebibliography}

@@ -3,25 +3,25 @@ The top-level auxiliary file: report.aux
 The style file: abbrvnat.bst
 Database file #1: ref.bib
 You've used 6 entries,
-            2773 wiz_defined-function locations,
-            655 strings with 6412 characters,
-and the built_in function-call counts, 3763 in all, are:
-= -- 374
+            2755 wiz_defined-function locations,
+            656 strings with 6425 characters,
+and the built_in function-call counts, 3709 in all, are:
+= -- 372
 > -- 207
 < -- 6
 + -- 69
 - -- 63
-* -- 309
-:= -- 564
+* -- 295
+:= -- 562
 add.period$ -- 36
 call.type$ -- 6
-change.case$ -- 39
+change.case$ -- 33
 chr.to.int$ -- 6
 cite$ -- 12
-duplicate$ -- 168
-empty$ -- 279
+duplicate$ -- 162
+empty$ -- 273
 format.name$ -- 73
-if$ -- 827
+if$ -- 819
 int.to.chr$ -- 1
 int.to.str$ -- 1
 missing$ -- 6
@@ -29,12 +29,12 @@ newline$ -- 52
 num.names$ -- 24
 pop$ -- 65
 preamble$ -- 1
-purify$ -- 33
+purify$ -- 27
 quote$ -- 0
-skip$ -- 138
+skip$ -- 134
 stack$ -- 0
 substring$ -- 142
-swap$ -- 41
+swap$ -- 43
 text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
@@ -42,4 +42,4 @@ type$ -- 66
 warning$ -- 0
 while$ -- 30
 width$ -- 0
-write$ -- 121
+write$ -- 119

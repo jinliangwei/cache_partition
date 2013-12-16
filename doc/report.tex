@@ -1,5 +1,8 @@
 \documentclass{acm_proc_article-sp}
 \usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{tikz, alex, url, mu}
 \usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri}
 \tikzset{>=stealth}
@@ -12,6 +15,22 @@
 \maketitle
 
 \begin{abstract}
+
+Shared last-level cache has became the bottleneck of scalability in 
+chip-multi-processors (CMPs) as one application's accesses to shared 
+cache suffer from interferences caused by other cores' accesses. Cache 
+partitioning has been proposed to partition shared cache among cores or
+applications to alleviate interferences in shared cache. Existing cache
+partitioning techniques assumes no prior knowledge is known about the 
+applications before they starts running and thus may start with a terriable
+initial partitioning. However, application developers, compilers or operating
+systems may be able to provide software hints about the application's cache
+usage beforehand. In our work, we studied what kinds of software hints might be 
+useful and how they might be used assuming those hints could be generated. We
+designed and implemented a system that uses software hints for cache 
+parititioning. Evaluations showed that software-hinted cache paritioning indeed
+improves shared cache performance in terms of total number of misses. Our work
+provides the first step for future works on software-hinted cache paritioning.
 
 \end{abstract}
 
@@ -105,7 +124,8 @@ algorithm for the resources they had available, there are various scenarios
 which they were not able to account for due to hardware limitations, creating 
 weak spots in their system.
 
-\cite{10.1109/MM.2008.48} proposes a thread scheduling scheme to minimize LLC con-tention based on 
+\cite{10.1109/MM.2008.48} proposes a thread scheduling scheme to minimize LLC 
+con-tention based on 
 architectural observations made by the OS at run- time. While the paper does 
 not discuss the modification of architectural features, it demonstrates how the 
 OS can interface with the architecture to find optimize system behavior. In this
@@ -120,6 +140,101 @@ intensive processes are given an appropriate amount of resources rather than
 being forced to share an unnecessary and counter productive portion of cache. 
 The feature we are proposing could possibly extend this scheme by allowing the 
 OS to interface with shared caches to get better partitioning.
+
+Previous approaches assume nothing is known about the application in prior and 
+thus can only partition the shared fairly among cores. Since those approaches 
+rely on analyzing runtime statistics and dynamically adjusting cache partition,
+it may take too long for them to converge to an optimal partition. Also, since 
+they rely on analyzing runtime application behavior, those approaches demand 
+higher hardware cost and introduce runtime overhead. In contrast, our approach
+introduce lower hardware complexity and lower runtime overhead.
+
+\section{Proposed Technique}
+
+An application may have multiple phases and it may have different needs for 
+cache in different phases. Our framework allows the application to issue 
+cache requests anytime during the course of the program. The request specifies 
+the working set size of the application in the next phase. The shared cache
+takes into account the requests from all cores and partition the shared cache
+propotionally according to their working set size. We refer to this as 
+\emph{working-set-size-based partitioning}. Our technique is visualized 
+in Figure~\ref{fig:hinted_partition}
+
+Besides the basic partitiong approoach above, we also propose a more 
+sophisticated partitioning strategy. Instead of providing a single number of 
+working set size, the software hint may provide a cache miss curve at each 
+phase. Knowing the cache miss curve allows the shared cache to analyze the 
+marginal benefits of allocating shared cache space to each core and thus get
+the optimal partition that miminizes cache miss rate. We refer to this as 
+\emph{cache-miss-curve-based partitioning}.
+
+Programs consist of functions. In our approach, application phases are marked by
+function boundaries. Thus reqeusts for shared cache are issued every time the 
+application enters a function.
+
+\begin{figure}[th!]
+  \label{fig:hinted_partition}
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/hinted_partition.pdf}
+  \caption{\small Visual illustration of shared cache partitioning based on software 
+    requests of working set sizes. Firstly, application 1 issues its request 
+    of 4 bytes and application 2 issues its request of 16 bytes. Core0 and Core1 
+  forwards the requests to the shared cache. The shared cache then partitions 
+  ways propotional to the working set sizes of each application. Thus 2 ways are 
+  allocated for core0 and 4 ways are allocated for core1. When application 1 issues
+  a new request for shared cache, the shared cache re-partitions ways 
+  accordingly.}
+\end{figure}
+
+
+
+\section{Implementation and Evaluation Methology}
+
+The propsed technique requires our framework to take in cache request any time 
+and adjust cache partitioning accoridngly. However, this was too complicated to
+implement. Due to limitation of time, we resorted to a simplified 
+implementation. Instead of letting the application to issue cache requests at 
+phase changes, we only let applications to issue cache requests when the program
+starts. The shared cache is partitioned according to the requests and the 
+partitioning is used for the entire course of the program.
+
+Our technique is implemented on a simulator Multi2Sim, which is used for 
+evaluation.
+
+In order to evaluate our proposed partitioning strategy, we need to predict the 
+working set size and the cache miss curve of each function. To learn the cache 
+miss curve of each function, we used a tool called Cachegrind 
+which simulates a cache of user-specified configuration and reports statistics 
+about the program running with the give cache setting. It may also report 
+statistics of each function of the program. Thus, by varying the size of shared 
+cache, we obtained the cache miss curve of the entire program as well as that of
+ each function.
+
+In order to evaluate the \emph{working-set-size-based partitioning}, we 
+
+\begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.25\textwidth}
+          \includegraphics[width=\textwidth]{figs/epic-decode-miss-curve.pdf}
+        \end{subfigure}%
+        %\quad
+        \begin{subfigure}[b]{0.25\textwidth}
+          \includegraphics[width=\textwidth]{figs/epic-encode-miss-curve.pdf}
+       \end{subfigure}
+
+        \begin{subfigure}[b]{0.25\textwidth}
+          \includegraphics[width=\textwidth]{figs/jpeg-decode-miss-curve.pdf}
+        \end{subfigure}%
+        %\quad
+        \begin{subfigure}[b]{0.25\textwidth}
+          \includegraphics[width=\textwidth]{figs/jpeg-encode-miss-curve.pdf}
+       \end{subfigure}
+
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=0.5\textwidth]{figs/work_set_size_hit_ratio.png}
+\end{figure}
 
 \bibliography{ref}
 \bibliographystyle{abbrvnat}
