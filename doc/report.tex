@@ -247,6 +247,9 @@ this was not the case and thus must be addressed in a future work.
 
 \section{Results and Analyses}
 
+The initial step of our project was to evaluate the performance of our working set based implementation. As can be seen in Figure~\ref{fig:hinted_partition}, over our relatively small sample size, the results show an improvement. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
+massive degradation in performance. This revealed one of the dangers with simple working set partitioning. While it is simple for a developer to ascertain the working set of his program, it is impossible for the cache to weight two similar working sets against each other. As can be seen from the 
+
 \begin{figure}
         \centering
         \begin{subfigure}[b]{0.25\textwidth}
