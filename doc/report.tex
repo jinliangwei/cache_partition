@@ -16,29 +16,30 @@
 
 \begin{abstract}
 
-Shared last-level cache has became the bottleneck of scalability in 
-chip-multi-processors (CMPs) as one application's accesses to shared 
-cache suffer from interferences caused by other cores' accesses. Cache 
-partitioning has been proposed to partition shared cache among cores or
-applications to alleviate interferences in shared cache. Existing cache
-partitioning techniques assumes no prior knowledge is known about the 
-applications before they starts running and thus may start with a terriable
+Shared last-level caches have became a critical bottleneck to scalability in 
+chip-multi-processors (CMPs). When an application's working set is large
+enough to fill the last level cache, the cache use efficiency of applications running on
+different cores may become degraded due to interference. Cache 
+partitioning has been proposed as a potential solution to create efficient cache sharing among cores or
+applications to alleviate interference in the shared last level cache. Existing cache
+partitioning techniques assume the shared cache has no prior knowledge of the 
+applications before runtime and thus may start with a suboptimal
 initial partitioning. However, application developers, compilers or operating
-systems may be able to provide software hints about the application's cache
+systems may be able to provide software hints of the application's cache
 usage beforehand. In our work, we studied what kinds of software hints might be 
 useful and how they might be used assuming those hints could be generated. We
 designed and implemented a system that uses software hints for cache 
-parititioning. Evaluations showed that software-hinted cache paritioning indeed
+partitioning. Evaluations showed that software-hinted cache partitioning indeed
 improves shared cache performance in terms of total number of misses. Our work
-provides the first step for future works on software-hinted cache paritioning.
+provides the first step for future works on software-hinted cache partitioning.
 
 \end{abstract}
 
 \section{Introduction}
 
 In traditional chip-multi-processors (CMPs), the last-level cache is 
-shared among all cores and LRU is usually used as the replacement policy. Shared
-last-level cache is long konwn to suffer from interference among cores. The 
+shared among all cores and LRU is usually used as the replacement policy. The shared
+last-level cache has long been known to suffer from interference among cores. The 
 LRU policy implicitly partitions the shared cache among cores based on their 
 requests for cache resources. The resulted cache partitioning among cores is
 unlikly to be optimal in terms of the total number of cache misses. This is 
@@ -196,16 +197,18 @@ application enters a function.
 
 \section{Implementation and Evaluation Methology}
 
-The propsed technique requires our framework to take in cache request any time 
-and adjust cache partitioning accoridngly. However, this was too complicated to
-implement. Due to limitation of time, we resorted to a simplified 
+The proposed technique requires that a framework be created in the architecture that is capable of
+receiving a cache request from the software at any point during runtime, 
+and adjusting the cache partitioning accoridngly. A full implementation of an evaluation framework would 
+have marked several points in a program at which to send new requests. When these were detected
+via the eip, the request would be sent to the last level cache. However, this was too complicated to implement. Due to limitation of time, we resorted to a simplified 
 implementation. Instead of letting the application issue cache requests at 
 phase changes, we only let applications issue cache requests when the program
 starts. The shared cache is partitioned according to the requests and the 
 partitioning is used for the entire course of the program.
 
-Our technique is implemented on a simulator Multi2Sim, which is used for 
-evaluation. We used Mediabench as our benchmarks \cite{mediabench}.
+Our technique is implemented on the open source simulator Multi2Sim, which we used for the
+evaluation of our technique. We used four Mediabench programs and their associated workloads as the benchmarks for our approach \cite{mediabench}.
 
 In order to evaluate our proposed partitioning strategy, we need to predict the 
 working set size and the cache miss curve of each function. To learn the cache 
