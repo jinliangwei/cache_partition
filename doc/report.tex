@@ -16,29 +16,30 @@
 
 \begin{abstract}
 
-Shared last-level cache has became the bottleneck of scalability in 
-chip-multi-processors (CMPs) as one application's accesses to shared 
-cache suffer from interferences caused by other cores' accesses. Cache 
-partitioning has been proposed to partition shared cache among cores or
-applications to alleviate interferences in shared cache. Existing cache
-partitioning techniques assumes no prior knowledge is known about the 
-applications before they starts running and thus may start with a terriable
+Shared last-level caches have became a critical bottleneck to scalability in 
+chip-multi-processors (CMPs). When an application's working set is large
+enough to fill the last level cache, the cache use efficiency of applications running on
+different cores may become degraded due to interference. Cache 
+partitioning has been proposed as a potential solution to create efficient cache sharing among cores or
+applications to alleviate interference in the shared last level cache. Existing cache
+partitioning techniques assume the shared cache has no prior knowledge of the 
+applications before runtime and thus may start with a suboptimal
 initial partitioning. However, application developers, compilers or operating
-systems may be able to provide software hints about the application's cache
+systems may be able to provide software hints of the application's cache
 usage beforehand. In our work, we studied what kinds of software hints might be 
 useful and how they might be used assuming those hints could be generated. We
 designed and implemented a system that uses software hints for cache 
-parititioning. Evaluations showed that software-hinted cache paritioning indeed
+partitioning. Evaluations showed that software-hinted cache partitioning indeed
 improves shared cache performance in terms of total number of misses. Our work
-provides the first step for future works on software-hinted cache paritioning.
+provides the first step for future works on software-hinted cache partitioning.
 
 \end{abstract}
 
 \section{Introduction}
 
 In traditional chip-multi-processors (CMPs), the last-level cache is 
-shared among all cores and LRU is usually used as the replacement policy. Shared
-last-level cache is long konwn to suffer from interference among cores. The 
+shared among all cores and LRU is usually used as the replacement policy. The shared
+last-level cache has long been known to suffer from interference among cores. The 
 LRU policy implicitly partitions the shared cache among cores based on their 
 requests for cache resources. The resulted cache partitioning among cores is
 unlikly to be optimal in terms of the total number of cache misses. This is 
@@ -196,17 +197,18 @@ application enters a function.
 
 \section{Implementation and Evaluation Methology}
 
-The propsed technique requires our framework to take in cache request any time 
-and adjust cache partitioning accoridngly. However, this was too complicated to
-implement. Due to limitation of time, we resorted to a simplified 
+The proposed technique requires that a framework be created in the architecture that is capable of
+receiving a cache request from the software at any point during runtime, 
+and adjusting the cache partitioning accoridngly. A full implementation of an evaluation framework would 
+have marked several points in a program at which to send new requests. When these were detected
+via the eip, the request would be sent to the last level cache. However, this was too complicated to implement. Due to limitation of time, we resorted to a simplified 
 implementation. Instead of letting the application issue cache requests at 
 phase changes, we only let applications issue cache requests when the program
 starts. The shared cache is partitioned according to the requests and the 
 partitioning is used for the entire course of the program.
 
-Our technique is implemented on a simulator Multi2Sim \cite{multi2sim}, 
-which is used for evaluation. We used Mediabench as our benchmarks 
-\cite{mediabench}.
+Our technique is implemented on the open source simulator Multi2Sim, which we used for the
+evaluation of our technique. We used four Mediabench programs and their associated workloads as the benchmarks for our approach \cite{mediabench}.
 
 In order to evaluate our proposed partitioning strategy, we need to predict the 
 working set size and the cache miss curve of each function. To learn the cache 
@@ -284,9 +286,8 @@ our partitioning methods against a static split partitioning approach, in which 
   \label{fig:work_set_results}
 \end{figure}
 
-The initial step of our project was to evaluate the performance of our working 
-set based implementation. As can be seen in Figure~\ref{fig:work_set_results}, over our relatively small sample size, the results show an improvement. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
-massive degradation in performance. This revealed one of the dangers with simple working set partitioning. While it is simple for a developer to ascertain the working set of his program, it is impossible for the cache to weight two similar working sets against each other. As can be seen by comparing  Figure~\ref{fig:epic-encode} and Figure ~\ref{fig:epic-decode}, the base MPKI for Epic Encode is higher than that of Epic Decode. However, the working set size for Epic Decode appears to be higher than that of Epic Encode, which resulted in the manner in which it was allocated. Since Epic Encode was given a smaller partition than that of Epic Decode, despite the fact that it generated more cache misses, performance suffered. The possibility for misallocations like this led to the development of our utility based partitioning method.
+The initial step of our project was to evaluate the performance of our working set based implementation. As can be seen in Figure~\ref{fig:hinted_partition}, over our relatively small sample size, the results show an improvement. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
+massive degradation in performance. This revealed one of the dangers with simple working set partitioning. While it is simple for a developer to ascertain the working set of his program, it is impossible for the cache to weight two similar working sets against each other. As can be seen by comparing  Figure~\ref{fig:epic-encode} and Figure ~\ref{fig:epic-decode}, the base MPKI for Epic Encode is higher than that of Epic Decode. However, the working set size for Epic Decode appears to be higher than that of Epic Encode, which resulted in the manner in which we decided to make the simulated request. Since Epic Encode was given a smaller partition than that of Epic Decode, despite the fact that it generated more cache misses, performance suffered. The possibility for misallocations like this led to the development of our utility based partitioning method.
 
 \begin{figure}
   \includegraphics[width=0.5\textwidth]{figs/utility_hit_ratio.png}
@@ -346,7 +347,7 @@ as possible, as the small sample of programs led to a small number of pairings w
 
 Beyond the shortcomings of the benchmarks we had used, and the resulting effects on the simulations we ran, there were many lacking points in our custom simulator implementation. We were able to implement cache partitioning over the entire run of the program, which was a good proof of concept. However, in our original plan we stated that we would investigate the potential of software hints at phase changes in the program via function profiling. However, for the benchmarks we used, we were unable to reverse engineer the call graphs for our test programs from the provided binaries. Though cachegrind was able to count cache misses per function, this data was useless without knowledge of these functions’ placement in the program.
  
-In addition, in our custom simulator did not implement partitioning via Utility Monitoring. This was meant to be the prime point of comparison for our study, as our software hints implementation essentially places the burden of utility monitoring onto the developer.  However, we were unable to implement utility monitoring in our simulator and thus we were unable to study it. On the other hand, considering the fact that our partitioning solution was largely incomplete, it likely would not have had a strong chance of competing against a UMON partitioning solution. Our tested implementation was essentially static, whereas UMON allocates ways dynamically.
+In addition, in our custom simulator did not implement partitioning via Utility Monitoring. This was meant to be the prime point of comparison for our study, as our software hints implementation essentially places the burden of utility analysis onto the developer.  However, we were unable to implement utility monitoring in our simulator and thus we were unable to study it. On the other hand, considering the fact that our partitioning solution was largely incomplete, it likely would not have had a strong chance of competing against a UMON partitioning solution. Our tested implementation was essentially static, whereas UMON allocates ways dynamically.
  
 The work we have done is essentially a proof of concept, which we believe shows that software hints have great potential for future cache partitioning implementations. Logical future steps, as outlined, would be to test against contemporary benchmarks and to use a simulator setup commensurate with modern architectures, implement a dynamic partitioning solution and make a comparison against partitioning via Utility Monitoring.
 
