@@ -1,0 +1,58 @@
+\begin{thebibliography}{1}
+
+\bibitem{conf/IEEEpact/BeckmannS13}
+Nathan Beckmann and Daniel Sanchez.
+\newblock Jigsaw: Scalable software-defined caches.
+\newblock In {\em PACT}, pages 213--224. IEEE, 2013.
+
+\bibitem{Ipek:2008:SMC:1381306.1382172}
+Engin Ipek, Onur Mutlu, Jos{\'e}~F. Mart\'{\i}nez, and Rich Caruana.
+\newblock Self-optimizing memory controllers: A reinforcement learning
+  approach.
+\newblock In {\em Proceedings of the 35th Annual International Symposium on
+  Computer Architecture}, ISCA '08, pages 39--50, Washington, DC, USA, 2008.
+  IEEE Computer Society.
+
+\bibitem{10.1109/MM.2008.48}
+Rob Knauerhase, Paul Brett, Barbara Hohlt, Tong Li, and Scott Hahn.
+\newblock Using os observations to improve performance in multicore systems.
+\newblock {\em IEEE Micro}, 28(3):54--66, 2008.
+
+\bibitem{mediabench}
+C.~Lee, M.~Potkonjak, and W.~H. Mangione-Smith.
+\newblock Mediabench: A tool for evaluating and synthesizing multimedia and
+  communications systems.
+\newblock In {\em Proc. of the 30th Int'l Symposium on Microarchitecture}, Dec.
+  1997.
+
+\bibitem{conf/IEEEpact/MoretoCRV07}
+Miquel Moreto, Francisco~J. Cazorla, Alex Ramirez, and Mateo Valero.
+\newblock Mlp-aware dynamic cache partitioning.
+\newblock In {\em PACT}, page 418. IEEE Computer Society, 2007.
+
+\bibitem{Qureshi:2006:CMC:1150019.1136501}
+Moinuddin~K. Qureshi, Daniel~N. Lynch, Onur Mutlu, and Yale~N. Patt.
+\newblock A case for mlp-aware cache replacement.
+\newblock {\em SIGARCH Comput. Archit. News}, 34(2):167--178, May 2006.
+
+\bibitem{Qureshi:2006:UCP:1194816.1194855}
+Moinuddin~K. Qureshi and Yale~N. Patt.
+\newblock Utility-based cache partitioning: A low-overhead, high-performance,
+  runtime mechtanism to partition shared caches.
+\newblock In {\em Proceedings of the 39th Annual IEEE/ACM International
+  Symposium on Microarchitecture}, MICRO 39, pages 423--432, Washington, DC,
+  USA, 2006. IEEE Computer Society.
+
+\bibitem{cachegrind}
+Julian Seward and et. al.
+\newblock Cachegrind: a cache and branch-prediction profiler.
+\newblock \url{http://valgrind.org/docs/manual/cg-manual.html}.
+\newblock Accessed: 2013-12.
+
+\bibitem{multi2sim}
+Rafael Ubal, Byunghyun Jang, Perhaad Mistry, Dana Schaa, and David Kaeli.
+\newblock { Multi2Sim: A Simulation Framework for CPU-GPU Computing }.
+\newblock In {\em Proc. of the 21st International Conference on Parallel
+  Architectures and Compilation Techniques}, Sep. 2012.
+
+\end{thebibliography}

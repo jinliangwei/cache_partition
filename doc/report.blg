@@ -1,45 +1,45 @@
 This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
 The top-level auxiliary file: report.aux
-The style file: abbrvnat.bst
+The style file: plain.bst
 Database file #1: ref.bib
-You've used 6 entries,
-            2755 wiz_defined-function locations,
-            656 strings with 6425 characters,
-and the built_in function-call counts, 3709 in all, are:
-= -- 372
-> -- 207
-< -- 6
-+ -- 69
-- -- 63
-* -- 295
-:= -- 562
-add.period$ -- 36
-call.type$ -- 6
-change.case$ -- 33
-chr.to.int$ -- 6
-cite$ -- 12
-duplicate$ -- 162
-empty$ -- 273
-format.name$ -- 73
-if$ -- 819
-int.to.chr$ -- 1
-int.to.str$ -- 1
-missing$ -- 6
-newline$ -- 52
-num.names$ -- 24
-pop$ -- 65
+You've used 9 entries,
+            2118 wiz_defined-function locations,
+            563 strings with 6035 characters,
+and the built_in function-call counts, 3581 in all, are:
+= -- 351
+> -- 182
+< -- 4
++ -- 72
+- -- 62
+* -- 243
+:= -- 572
+add.period$ -- 32
+call.type$ -- 9
+change.case$ -- 58
+chr.to.int$ -- 0
+cite$ -- 9
+duplicate$ -- 145
+empty$ -- 279
+format.name$ -- 62
+if$ -- 781
+int.to.chr$ -- 0
+int.to.str$ -- 9
+missing$ -- 8
+newline$ -- 49
+num.names$ -- 18
+pop$ -- 73
 preamble$ -- 1
-purify$ -- 27
+purify$ -- 49
 quote$ -- 0
-skip$ -- 134
+skip$ -- 105
 stack$ -- 0
-substring$ -- 142
-swap$ -- 43
+substring$ -- 176
+swap$ -- 45
 text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 66
+type$ -- 36
 warning$ -- 0
 while$ -- 30
-width$ -- 0
-write$ -- 119
+width$ -- 10
+write$ -- 107
