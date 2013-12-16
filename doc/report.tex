@@ -234,7 +234,7 @@ Due to the relatively static nature of our simulator implementation, no reimplem
 was required. Working set sizes which summed to the size of the cache, thus
 corresponding directly to the number of ways to be assigned to a core's partition.
 To obtain the optimal partition for this mechanism, the two miss curves were overlaid
-in opposite directions. The reason for this is due to the fact that partitioning acts like a sliding scale
+in opposite directions. This can be seen in Figure~\ref{fig:utility_results}. The reason for this is due to the fact that partitioning acts like a sliding scale
 between applications. Sliding one way will cause fewer misses for one application, but more for the
 other. By overlaying the curves in this manner, their point of intersection will indicate the optimal partitioning
 between the two applications. At the point where the curves meet, the marginal utility lost by each application
@@ -284,12 +284,12 @@ our partitioning methods against a static split partitioning approach, in which 
   \label{fig:work_set_results}
 \end{figure}
 
-The initial step of our project was to evaluate the performance of our working set based implementation. As can be seen in Figure~\ref{fig:hinted_partition}, over our relatively small sample size, the results show an improvement. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
+The initial step of our project was to evaluate the performance of our working set based implementation. This can be seen in Figure~\ref{fig:hinted_partition}, over our relatively small sample size, the results show an improvement. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
 massive degradation in performance. This revealed one of the dangers with simple working set partitioning. While it is simple for a developer to ascertain the working set of his program, it is impossible for the cache to weight two similar working sets against each other. As can be seen by comparing  Figure~\ref{fig:epic-encode} and Figure ~\ref{fig:epic-decode}, the base MPKI for Epic Encode is higher than that of Epic Decode. However, the working set size for Epic Decode appears to be higher than that of Epic Encode, which resulted in the manner in which we decided to make the simulated request. Since Epic Encode was given a smaller partition than that of Epic Decode, despite the fact that it generated more cache misses, performance suffered. The possibility for misallocations like this led to the development of our utility based partitioning method.
 
 \begin{figure}
   \includegraphics[width=0.5\textwidth]{figs/utility_hit_ratio.png}
-  \caption{Experiment results of working-set-size-based partitioning}
+  \caption{Experiment results of utility-based partitioning}
   \label{fig:utility_results}
 \end{figure}
 
@@ -333,7 +333,7 @@ massive degradation in performance. This revealed one of the dangers with simple
 
 As shown in Figure~\ref{fig:utility_results}, over our chosen sample set, utility based partitioning performs largely as well as working set partitioning or even the simple split partition. This is due to the fact that those programs have similar cache utility profiles, meaning an even split
 will generate a fairly optimal partitioning. Where utility based partitioning shines is in application pairings of fairly different
-utility profiles, such as that of epic encode vs epic decode. The partitioning chosen via the marginal utility intersection brought performance back to at least the level of naive LRU replacement. While LRU performance isn't necessarily great,  this is an example of utility based partitioning's capability of navigating the pitfalls of working set based partitioning. Similar results can be seen in Figure~\ref{fig:jpeg-decode} vs Figure ~\ref{fig:epic-decode}, where working set doesn't perform as well as the even split. In this instance, while Epic Decode doesn't have a particularly high miss rate per instruction, working set still discounts its value, and takes too many ways from jpeg-decode.  In fact their utility profiles are not super misbalanced, resulting in decent even split performance.
+utility profiles, such as that of epic encode vs epic decode. The partitioning chosen via the marginal utility intersection brought performance back to at least the level of naive LRU replacement. While LRU performance isn't necessarily great,  this is an example of utility based partitioning's capability of navigating the pitfalls of working set based partitioning. Similar results can be seen in Figure~\ref{fig:jpeg-decode} vs Figure ~\ref{fig:epic-decode}, where working set doesn't perform as well as the even split. In this instance, while Epic Decode doesn't have a particularly high miss rate per instruction, working set still discounts its value, and takes too many ways from Jpeg Decode.  In fact their utility profiles are only a single cache way from being balanced, resulting in decent even split performance.
 
 \section{Lessons Learned, Shortcomings, and Future Work}
  
