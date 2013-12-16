@@ -152,20 +152,26 @@ introduce lower hardware complexity and lower runtime overhead.
 \section{Proposed Technique}
 
 An application may have multiple phases and it may have different needs for 
-cache in different phases. Our framework allows the application to issue 
+cache in different phases. Our proposed framework would allow the application to issue 
 cache requests anytime during the course of the program. The request specifies 
-the working set size of the application in the next phase. The shared cache
+the working set size of the application in the upcoming phase. The shared cache
 takes into account the requests from all cores and partition the shared cache
 propotionally according to their working set size. We refer to this as 
-\emph{working-set-size-based partitioning}. Our technique is visualized 
+\emph{working-set-size-based partitioning}. Our basic technique is visualized 
 in Figure~\ref{fig:hinted_partition}
 
-Besides the basic partitiong approoach above, we also propose a more 
+However, the above partitioning approach has its limitations. While it allows the
+cache to take into account working set sizes of applications, it is completely ignorant
+of an application's cache sensitivity. With the basic technique, while two applications
+may have similar working sets, one program may have much more sparse cache accesses.
+The ideal approach would be able to take into account cache access frequency as well. 
+Thus, besides the basic partitiong approoach above, we also propose a more 
 sophisticated partitioning strategy. Instead of providing a single number of 
 working set size, the software hint may provide a cache miss curve at each 
-phase. Knowing the cache miss curve allows the shared cache to analyze the 
-marginal benefits of allocating shared cache space to each core and thus get
-the optimal partition that miminizes cache miss rate. We refer to this as 
+phase. This miss curve would consist of the MPKI over a range of cache sizes. 
+Knowing these cache miss curves would allow the shared cache to analyze the 
+marginal benefits of allocating shared cache space to each core and thus achieve
+the optimal partition that miminizes cache miss rate for the entire system. We refer to this as 
 \emph{cache-miss-curve-based partitioning}.
 
 Programs consist of functions. In our approach, application phases are marked by
@@ -193,8 +199,8 @@ application enters a function.
 The propsed technique requires our framework to take in cache request any time 
 and adjust cache partitioning accoridngly. However, this was too complicated to
 implement. Due to limitation of time, we resorted to a simplified 
-implementation. Instead of letting the application to issue cache requests at 
-phase changes, we only let applications to issue cache requests when the program
+implementation. Instead of letting the application issue cache requests at 
+phase changes, we only let applications issue cache requests when the program
 starts. The shared cache is partitioned according to the requests and the 
 partitioning is used for the entire course of the program.
 
@@ -213,18 +219,37 @@ cache, we obtained the cache miss curve of the entire program as well as that of
 
 In order to evaluate the \emph{working-set-size-based partitioning}, we need to 
 know the working set size of each applications. We obtained that from each 
-application's cache miss curve. We show a few applications' miss curves in 
-Figure~\ref{fig:miss-curve}. We consider the working set size to be the point
-where the cache miss rate stops dropping rapidly as the cache size increases. In
-other words, it's where the slope of the cache miss curve decreases 
+application's cache miss curve. We show a few applications' miss curves in Figure~\ref{fig:miss-curve}. 
+We consider the working set size to be the point where the cache miss rate stops dropping rapidly as the cache size increases. In other words, it's where the slope of the cache miss curve decreases 
 significantly. For some applications, such as those shown in 
 Figure~\ref{fig:epic-decode} and Figure~\ref{fig:epic-encode}, this point is 
 obvious. For some other applications, such as those shown in 
 Figure~\ref{fig:jpeg-decode} and Figure~\ref{fig:jpeg-encode}, it's not obvious
 where the marginal benefit of increasing cache size drops. In such cases, we 
-might make a bad decision in choosng working set sizes. To evaluate the effects 
-of choosing suboptimal working set size, we conducted sensitivity experiments 
-whose results are shown in Section~\ref{sec:results}.
+might make a bad decision in choosng working set sizes. Some of the
+effects of choosing a bad working set can be seen in Section~\ref{sec:results}.
+
+The \emph{cache-miss-curve-based partitioning} was evaluated in a similar way.
+Due to the relatively static nature of our simulator implementation, no reimplementation
+was required. Working set sizes which summed to the size of the cache, thus
+corresponding directly to the number of ways to be assigned to a core's partition.
+To obtain the optimal partition for this mechanism, the two miss curves were overlaid
+in opposite directions. The reason for this is due to the fact that partitioning acts like a sliding scale
+between applications. Sliding one way will cause fewer misses for one application, but more for the
+other. By overlaying the curves in this manner, their point of intersection will indicate the optimal partitioning
+between the two applications. At the point where the curves meet, the marginal utility lost by each application
+is equal. Here, marginal utility is measured in cache misses per instruction. The start and end point for each miss curve corresponded directly to the size of the cache. For our simulations, the miss curves were cut off at a size of 3584,
+as a single collection of ways across the sets of the cache sums to 512 bytes, and no
+application can take all ways, or have none. For some application pairs, the miss curves intersected at a simulatable
+size point, while for others the intersection fell between points. In these cases, the nearest size point was chosen. 
+If we had been able to simulate a larger cache, we could have increased the granularity of the ways. However,
+this was not the case and thus must be addressed in a future work.
+
+
+\section{Results and Analyses}
+
+The initial step of our project was to evaluate the performance of our working set based implementation. As can be seen in Figure~\ref{fig:hinted_partition}, over our relatively small sample size, the results show an improvement. However in the case of running Epic Encode and Epic Decode together, the working set selection used in the simulation caused a 
+massive degradation in performance. This revealed one of the dangers with simple working set partitioning. While it is simple for a developer to ascertain the working set of his program, it is impossible for the cache to weight two similar working sets against each other. As can be seen from the 
 
 \begin{figure}
         \centering
@@ -267,6 +292,19 @@ Figure~
   \includegraphics[width=0.5\textwidth]{figs/work_set_size_hit_ratio.png}
 \end{figure}
 
+\section{Lessons Learned, Shortcomings, and Future Work}
+ 
+While the investigation yielded interesting results with potential, many shortcomings prevented it from being thorough and definitively conclusive. First and foremost among these shortcomings was lack of access the SPEC2006 benchmark workloads. This shaped our non-standard simulation set up. As a substitute, we used Mediabench I and associated sample workloads, which only began to display poor locality at cache sizes of 4 kb. Though we were able to modify our simulator layout to account for this, the resulting simulation results may not relate well to the most current benchmarks and workloads.
+ 
+Beyond the shortcomings of the benchmarks we had used, and the resulting effects on the simulations we ran, there were many lacking points in our custom simulator implementation. We were able to implement cache partitioning over the entire run of the program, which was a good proof of concept. However, in our original plan we stated that we would investigate the potential of software hints at phase changes in the program via function profiling. However, for the benchmarks we used, we were unable to reverse engineer the call graphs for our test programs from the provided binaries. Though cachegrind was able to count cache misses per function, this data was useless without knowledge of these functions’ placement in the program.
+ 
+In addition, in our custom simulator did not implement partitioning via Utility Monitoring. This was meant to be the prime point of comparison for our study, as our software hints implementation essentially places the burden of utility monitoring onto the developer.  However, we were unable to implement utility monitoring in our simulator and thus we were unable to study it. On the other hand, considering the fact that our partitioning solution was largely incomplete, it likely would not have had a strong chance of competing against a UMON partitioning solution. Our tested implementation was essentially static, whereas UMON allocates ways dynamically.
+ 
+The work we have done is essentially a proof of concept, which we believe shows that software hints have great potential for future cache partitioning implementations. Logical future steps, as outlined, would be to test against contemporary benchmarks and to use a simulator setup commensurate with modern architectures, implement a dynamic partitioning solution and make a comparison against partitioning via Utility Monitoring.
+
+\section{Conclusion}
+
+We introduced a mechanism for allowing developers to provide software hints to shared caches. Our technique amounts to allowing developers to make allocation requests into a shared last level cache. This allows the cache to intelligently allocate cache-ways to applications running on different processor cores such that cache space is maximally used by the system. Although the original implemented solution simply consisted of requiring developers to indicate working set size, we created a more advanced implementation which took into account cache sensitivity as well as working set size. The final experimental implementation compared running applications’ marginal utility curves to determine the optimal way partitioning for the system. This implementation shows improvement over naïve LRU replacement as well as simple static partitioning methods. The next logical step in our implementation would be to implement capability for dynamic requests. Further, we wish to compare this implementation to utility monitoring based partitioning solutions, or even augment our final solution with utility monitoring to determine the greatest point to which cache partitioning can be maximized.
 
 
 \bibliography{ref}
